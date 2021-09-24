@@ -1,0 +1,44 @@
+{% extends "componentmanualcode/base.html" %}
+{% block extrahead %}
+<!-- <script>
+$(function() {
+    $('#menu_icon').hover(function() {
+        $('#menu').css('display', 'block');
+        $("#menu_icon").css('padding-right', $("#menu").outerWidth() - 54);
+        $("#menu_icon").css('padding-bottom', $("#menu").outerHeight());
+        $("#menu_icon > p").css('background-color', '#ddd');
+        $("#menu_icon > p span").css('color', 'rgb(16, 82, 136)');
+    }, function() {
+        $('#menu').css('display', 'none');
+        $("#menu_icon").css('padding', 0);
+        $("#menu_icon > p").css('background-color', 'unset');
+        $("#menu_icon > p span").css('color', '#ddd');
+    });
+
+    $("#menu").hover(function() {
+        $('#menu').css('display', 'block');
+        $("#menu_icon").css('padding-right', $("#menu").outerWidth() - 54);
+        $("#menu_icon").css('padding-bottom', $("#menu").outerHeight());
+        $("#menu_icon > p").css('background-color', '#ddd');
+        $("#menu_icon > p span").css('color', 'rgb(16, 82, 136)');
+    }, function() {
+        $('#menu').css('display', 'none');
+        $("#menu_icon").css('padding', 0);
+        $("#menu_icon > p").css('background-color', 'unset');
+        $("#menu_icon > p span").css('color', '#ddd');
+    });
+
+  });
+</script> -->
+{% endblock %}
+
+{% block title %}Pole Design Job Managament{% endblock %}
+{% load static %}
+{% block branding %}
+    <a href="{% url 'main:index' %}">
+        <div id="company">
+            <h1></h1>
+            <p></p>
+        </div>
+    </a>
+{% endblock %}

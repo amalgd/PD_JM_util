@@ -1,0 +1,229 @@
+{% extends "componentmanualcode/base_site.html" %}
+{% load static i18n %}
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/jquery-confirm.min.css' %}">
+{% endblock %}
+{% block user_actions %}
+<div id="user-actions">
+    {% if is_admin %}
+    <a id="switch_role" href="{% url 'main:index' %}">Switch View</a>
+    {% endif %}
+    {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a>
+    {% endif %}
+    <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+</div>
+{% endblock %}
+
+{% block content_title %}
+    <div id="page_title">
+        <div id="menu-holder">
+            <div id="menu-icon"><p><span>&#9776;</span></p></div>
+            <div id="menu">
+                <div id="new">
+                    <h4>
+                        <a href="{% url 'main:admin_index' %}">New Construction Class</a>
+                    </h4>
+                </div>
+                {% if existing_classes %}
+                <div id="existing">
+                    <h4>View/Edit<span style="right: 10px;position: absolute;">&#x25B6;</span></h4>
+                    <div id="saved_classes">
+                        <div>
+                            {% for item in existing_classes %}
+                            <a href="{% url 'main:admin_index' %}?class_id={{item.id}}" class="saved_class" class-id={{item.id}}>{{item.name}}</a>
+                            {% endfor %}
+                        </div>
+                    </div>                    
+                </div>
+                {% endif %}
+                
+            </div>
+        </div>
+        <h4>Construction Code Management</h4>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="content-holder">
+    <div id="message"></div>
+    <div id="work_area">
+        {% if cons_class %}
+        <h3>{{cons_class.name}} - Construction Codes</h3>
+        {% else %}
+        <h3>New Construction Class</h3>
+        {% endif %}
+        <form id="code-form" action="{% url 'main:save_codes' %}" method="POST">
+            {% csrf_token %}
+            <div id="cons_class-fields">
+                <div></div>
+                <div>
+                    <input id="cons_class-id" type="hidden" name="cons_class-id" value="{{cons_class.id}}">
+                    <input id="cons_class-name" name="cons_class-name" value="{{cons_class.name}}" type="text" placeholder="Enter Class Name"/>
+                </div>
+                <div id="form_controls">
+                    <button id="save_class_btn" type="submit" class="main_btn save" disabled>&#x1f4be;</button>
+                    {% if cons_class %}<button id="delete_class_btn" type="button" class="main_btn delete" {% if not cons_class %}disabled{% endif %}>&#x1f5d1;</button>{% endif %}
+                </div>
+            </div>
+            <div id="cons_class_names">
+                <div id="class_names-header">
+                    <p>Class Name Alternatives</p>
+                    <div id="coll_icon" style="font-size: 16px; margin: auto 4px;"> &#x25B6; </div>                
+                </div>
+                <div id="class_names-content" class="collapsed" style="display: none;">
+                    {% for name in cons_class.alt_names %}
+                    <div id="class_name-{{name.id}}" class="class_names">
+                        <input id="class_name-name-{{name.id}}" name="class_name-name-{{name.id}}" value="{{name.other_name}}">
+                    </div>
+                    {% endfor %}
+                    <button id="add_class_name" type="button" style="font-size: 14px; border: 1px outset #ddd; margin: 2px auto;">Add Another Class Name</button>
+                </div>
+            </div>
+        
+            <div id="code-form-fields">
+                <div id="base_code-container" class="code_group_container">
+                    <div id="base_codes" >
+                        <h4>Base Codes</h4>
+                        <div class="code_groups">
+                            {% for group in cons_class.base_code_groups %}
+                            <div id="group-{{group.id}}-container" class="group_container">
+                                <div id="group-{{group.id}}" class="group_fields" index="{{group.index}}">
+                                    <input id="group-index-{{group.id}}" class="b_g_index" type="number" min="1" max="9" name="bgroup-index-{{group.id}}" value="{{group.index}}" placeholder="Order"/>
+                                    <input id="group-name-{{group.id}}" class="g_name" type="text" name="bgroup-name-{{group.id}}" value="{{group.name}}" placeholder="Group name"/>
+                                    <input id="group-prefix-{{group.id}}" type="text" maxlength="1" name="bgroup-prefix-{{group.id}}" value="{{group.prefix}}" placeholder="Prefix"/>
+                                    <button id="group-delete-{{group.id}}" class="del_group base_group" type="button" name="bgroup-delete-{{group.id}}" value="">
+                                        <span>&#x1f5d1;</span>
+                                    </button>
+                                </div>
+                                
+                                <div id="codes-{{group.id}}-container" class="code_container">
+                                    {% for code in group.codes %}
+                                    <div id="code-{{code.id}}" class="code_fields">
+                                        <input id="code-code-{{code.id}}" type="text" name="code-code-{{code.id}}"  class="code-code base_group" group_idx={{group.id}} gfc_id="group-{{group.id}}" value="{{code.code}}" placeholder="Enter code"/>
+                                        <input id="code-desc-{{code.id}}" type="text" name="code-desc-{{code.id}}" value="{{code.desc}}" placeholder="Enter Description (optional)"/>
+                                        <button id="code-delete-{{code.id}}" class="del_code" type="button" name="code-delete-{{code.id}}" value="">
+                                            <span>&#x1f5d1;</span>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <button id="add_code_btn-{{group.id}}" class="add_code base_group"  group_idx="{{group.id}}" type="button">Add Code</button>
+                            </div>
+                            {% endfor %}
+                            <button id="add_base_code_option_group" class="add_group base_group" type="button">Add Code Group</button>
+                        </div>
+                    </div>
+                    <div id="manual_page">
+                        <h4>Base Code - Manual Page</h4>
+                        <div class="code_references">
+                            <div id="loader" style="display: none;"></div>
+                            <div id="code_reference_fields" style="display: none;">
+
+                            </div>
+                            <button id="add_manual_reference" type="button" style="margin: 4px auto;">Add Manual Reference Page</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="other_codes" class="code_group_container">
+                    <h4>Other Codes</h4>
+                    <div class="code_groups">
+                        {% for group in cons_class.other_code_groups %}
+                        <div id="group-{{group.id}}-container" class="group_container">
+                            <div id="group-{{group.id}}" class="group_fields" index="{{group.index}}">
+                                <input id="group-index-{{group.id}}" class="g_index" type="number" min="1" max="9" name="group-index-{{group.id}}" value="{{group.index}}" placeholder="Order"/>
+                                <input id="group-name-{{group.id}}" class="g_name" type="text" name="group-name-{{group.id}}" value="{{group.name}}" placeholder="Group name"/>
+                                <input id="group-prefix-{{group.id}}" type="text" maxlength="1" name="group-prefix-{{group.id}}" value="{{group.prefix}}" placeholder="Prefix"/>
+                                <button id="group-delete-{{group.id}}" class="del_group" type="button" name="group-delete-{{group.id}}" value="">
+                                    <span>&#x1f5d1;</span>
+                                </button>
+                            </div>
+                            
+                            <div id="codes-{{group.id}}-container" class="code_container">
+                                {% for code in group.codes %}
+                                <div id="code-{{code.id}}" class="code_fields">
+                                    <input id="code-code-{{code.id}}" type="text" name="code-code-{{code.id}}" class="code-code" group_idx="{{group.id}}" value="{{code.code}}" placeholder="Enter code"/>
+                                    <input id="code-desc-{{code.id}}" type="text" name="code-desc-{{code.id}}" value="{{code.desc}}" placeholder="Enter Description (optional)"/>
+                                    <button id="code-delete-{{code.id}}" class="del_code" type="button" name="code-delete-{{code.id}}" value="">
+                                        <span>&#x1f5d1;</span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <button id="add_code_btn-{{group.id}}" class="add_code" group_idx="{{group.id}}" type="button">Add Code</button>
+                        </div>
+                        {% endfor %}
+                        <button id="add_other_code_option_group" class="add_group" type="button" style="margin-bottom: 4px;">Add Code Group</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div id="templates" style="display: none;">
+            <input id="group_num" type="number" value="0" />
+            <input id="code_num" type="number" value="0" />
+            <input id="man_num" type="number" value="0" />
+            <input id="name_num" type="number" value="0" />
+            <div id="new_class_name-temp" class="class_names">
+                <input id="new_class_name-name-temp" name="new_class_name-name-temp" value="">
+            </div>
+            <div id="new_group-temp-container" class="group_container">
+                <div id="new_group-temp" class="group_fields">
+                    <input id="new_group-index-temp" class="g_index" type="number" min="1" max="9" name="new_group-index-temp" value="" placeholder="Order"/>
+                    <input id="new_group-name-temp" class="g_name" type="text" name="new_group-name-temp" value="" placeholder="Group Name"/>
+                    <input id="new_group-prefix-temp" type="text" maxlength="1" name="new_group-prefix-temp" value="" placeholder="Prefix"/>
+                    <button id="new_group-delete-temp" class="del_group new" type="button" name="new_group-delete-temp" value="">
+                        <span>&cross;</span>
+                    </button>
+                </div>
+                <div id="new_codes-temp-container" class="code_container">
+
+                </div>
+                <button id="ng_add_code_btn-temp" class="add_code btn" group_idx="" type="button">Add Code</button>
+            </div>
+            <div id="new_code-temp" class="code_fields">
+                <input id="new_code-code-temp" type="text" name="new_code-code-temp" group_idx="" class="code-code" value="" placeholder="Code"/>
+                <input id="new_code-desc-temp" type="text" name="new_code-desc-temp" value="" placeholder="Description"/>
+                <button id="new_code-delete-temp" class="del_code new" type="button" name="new_code-delete-temp" value="">
+                    <span>&cross;</span>
+                </button>
+            </div>
+            <div id="man_temp">
+                <select id="ref_code-code-temp" name="ref_code-code-temp" class="ref_code">
+                    <option id="empty">------</option>
+                </select>
+                <input id="ref_code-ref-temp" name="ref_code-ref-temp" class="ref_page" />
+                <button id="ref_code-delete-temp" class="del_ref" type="button" name="ref_code-delete-temp" value="">
+                    <span>&cross;</span>
+                </button>
+            </div>
+            <input id="r_idx_max" style="display: none;" value=""/>
+        </div>
+    </div>
+</div>
+<div id="modal-dialog" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <h2>Modal Header</h2>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the Modal Body</p>
+          <p>Some other text...</p>
+        </div>
+        <div class="modal-footer">
+          <h3>Modal Footer</h3>
+        </div>
+    </div>
+</div>
+<div id="content_screen"></div>
+{% endblock %}
+
+{% block extrascript %}
+<script src="{% static '/js/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static '/js/jquery-confirm.min.js' %}"></script>
+<script src="{% static '/js/common.js' %}"></script>
+<script src="{% static '/js/admin_index.js' %}"></script>
+{% endblock %}

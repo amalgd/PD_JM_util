@@ -1,0 +1,240 @@
+{% extends "componentmanualcode/base_site.html" %}
+{% load i18n static %}
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/jquery-confirm.min.css' %}">
+{% endblock %}
+{% block user_actions %}
+<div id="user-actions">
+    {% if is_admin %}
+    <a id="switch_role" href="{% url 'main:admin_index' %}">Switch View</a>
+    {% endif %}
+    {% if user.has_usable_password %}
+    <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a>
+    {% endif %}
+    <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+</div>
+{% endblock %}
+{% block content_title %}
+<div id="page_title">
+    <div id="menu-holder">
+        <div id="menu-icon"><p><span>&#9776;</span></p></div>
+        <div id="menu">
+            <div id="new">
+                <h4>
+                    <a href="{% url 'main:index' %}">New Construction Schedule</a>
+                </h4>
+            </div>
+            {% if existing_schedules %}
+            <div id="existing">
+                <h4>View/Edit<span style="right: 10px;position: absolute;">&#x25B6;</span></h4>
+                <div id="saved_scheds">
+                    <div>
+                        {% for item in existing_schedules %}
+                        <a href="{% url 'main:index' %}?sched_id={{item.id}}" class="saved_sched" class-id={{item.id}}>{{item.name}}</a>
+                        {% endfor %}
+                    </div>
+                </div>                    
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
+    <h4>Construction Schedule</h4>
+</div>
+{% endblock %}
+{% block content %}
+<div id="content-holder">
+    <div id="message"></div>
+    <div id="work_area" class="schedules">
+        {% if sched_store %}
+        <h3>{{sched_store.name}} - Construction Schedule</h3>
+        {% else %}
+        <h3>New Construction Schedule</h3>
+        {% endif %}
+        <form id="sched-form" action="{% url 'main:save_scheds' %}" method="POST">
+            {% csrf_token %}
+            <div id="sched_store-fields">
+                <div></div>
+                <div>
+                    <input id="sched_store-id" type="hidden" name="sched_store-id" value="{{sched_store.id}}">
+                    <input id="sched_store-name" name="sched_store-name" value="{{sched_store.name}}" type="text" placeholder="Enter Schedule Name"/>
+                </div>
+                <div id="form_controls">
+                    <button id="save_sched_btn" type="button" class="main_btn save">
+                        <p style="display:flex; margin: 0;"><span>&#x1f4be;</span><span>&#x25bc;</span></p>
+                        <div>Save Options
+                            <div id="save_copy" class="save_opts">Save a copy</div>
+                            <div id="export" class="save_opts">Export CSV</div>
+                        </div>
+                    </button>
+                    {% if sched_store %}<button id="delete_sched_btn" type="button" class="main_btn delete">&#x1f5d1;</button>{% endif %}
+                    {% if users %}
+                    <button id="share_sched_btn" type="button" class="main_btn"><p style="display:flex; margin: 0;"><span>&#x1f465;</span><span>&#x25bc;</span></p>
+                        <div> User Permissions
+                        {% for usr in users %}
+                        {% if user.id != usr.id %}
+                            <div>
+                                <p>{% firstof usr.get_short_name usr.get_username %}</p>
+                                <input type="radio" id="view-{{usr.id}}" name="share-{{usr.id}}" value="view"/>
+                                <label for="view-{{usr.id}}">view</label><br/>
+                                <input type="radio" id="edit-{{usr.id}}" name="share-{{usr.id}}" value="edit"/>
+                                <label for="edit-{{usr.id}}">edit</label><br/>
+                                <input type="radio" id="none-{{usr.id}}" name="share-{{usr.id}}" value="none" checked/>
+                                <label for="edit-{{usr.id}}">none</label><br/>
+                            </div>
+                        {% endif %}
+                        {% endfor %}
+                        </div>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            <div id="sched-form-fields">
+                <table id="sched-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 3%;">STN NO</th>
+                            <th style="width: 8%;"> STN LABEL</th>
+                            <th style="width: 8%;">POLE ALIGNMENT</th>
+                            <th style="width: 5%;">POLE SETTING DEPTH</th>
+                            <th style="width: 5%;">ACTION</th>
+                            <th style="width: 12%;">CONSTRUCTION CLASS</th>
+                            <th style="width: 12%;">CONSTRUCTION CODE</th>
+                            <th style="width: 5%;">DRAWING NO</th>
+                            <th style="width: 5%;">POSITION ON POLE</th>
+                            <th style="width: 20%;">REMARKS</th>
+                            <th style="width: 3%;">DELETE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for station in sched_store.scheds %}
+                        {% for sched in station %}
+                        <tr id="sched-id-{{sched.id}}" class="sched">
+                            {% if forloop.first %}
+                            <td id="station-num-{{sched.id}}-{{station.id}}" class="station_fields" rowspan="{{station.sched|length|add:'1'}}">
+                                <input id="stn-num-{{sched.id}}-{{station.id}}" name="stn-num-{{sched.id}}-{{station.id}}" value="{{station.num}}"/>
+                            </td>
+                            <td id="station-lbl-{{sched.id}}-{{station.id}}" class="station_fields" rowspan="{{station.sched|length|add:'1'}}">
+                                <input id="stn-lbl-{{sched.id}}-{{station.id}}" name="stn-lbl-{{sched.id}}-{{station.id}}" value="{{station.lbl}}"/>
+                            </td>
+                            <td id="station-algn-{{sched.id}}-{{station.id}}" class="station_fields" rowspan="{{station.sched|length|add:'1'}}">
+                                <input id="stn-algn-{{sched.id}}-{{station.id}}" name="stn-algn-{{sched.id}}-{{station.id}}" value="{{station.algn}}"/>
+                            </td>
+                            <td id="station-dep-{{sched.id}}-{{station.id}}" class="station_fields" rowspan="{{station.sched|length|add:'1'}}">
+                                <input id="stn-dep-{{sched.id}}-{{station.id}}" name="stn-dep-{{sched.id}}-{{station.id}}" value="{{station.dep}}"/>
+                            </td>
+                            {% endif %}
+                            <td id="sched-act-{{sched.id}}" class="job">
+                                <input id="act-{{sched.id}}" name="act-{{sched.id}}" value="{{sched.action}}"/>
+                            </td>
+                            <td id="sched-class-{{sched.id}}" class="job">
+                                <input type="hidden" id="class-{{sched.id}}" name="class-{{sched.id}}" value="{{sched.class_id}}"/>
+                                <input id="class-name-{{sched.id}}" class="cons_class" list="class_name-list" value="{{sched.class_name}}"/>
+                            </td>
+                            <td id="sched-code-{{sched.id}}" class="job">
+                                <input id="code-{{sched.id}}" type="button" name="code-{{sched.id}}" class="code" type="button" value="{{sched.code}}"/>
+                            </td>
+                            <td id="sched-man-{{sched.id}}" class="job">
+                                <input id="man-{{sched.id}}" type="button" name="man-{{sched.id}}" class="code_ref" ref_id="" value="{{sched.man_page}}"/>
+                            </td>
+                            <td id="sched-pos-{{sched.id}}" class="job">
+                                <input id="pos-{{sched.id}}" name="pos-{{sched.id}}" value="{{sched.pos}}"/>
+                            </td>
+                            <td id="sched-rem-{{sched.id}}" class="job">
+                                <input id="rem-{{sched.id}}" name="rem-{{sched.id}}" value="{{sched.rem}}"/>
+                            </td>
+                            <td  id="sched-del-{{sched.id}}" class="del_sched">
+                                <button id="del-{{sched.id}}" name="del-{{sched.id}}" type="button">Del</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="7">
+                                <button id="add_sched-{{station.id}}" class="add_sched" type="button">Add Schedule</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr style="height: 100%;">
+                            <td colspan="4">
+                                <button id="add_station" type="button">Add Station</button>
+                            </td>
+                            <td colspan="7" style="height: 100%;">
+                                <div style="background-color: #aaa; border-top: 4px solid #ddd; height: 100%;"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+    <datalist id="class_name-list">
+        <option value="" class="empty">------</option>
+        {% for class in cons_classes %}
+        <option value="{{class.name}}" class-id="{{class.id}}">{{class.name}}</option>
+        {% for oname in class.other_names %}
+        <option value="{{oname}}" class-id="{{class.id}}">{{oname}}</option>
+        {% endfor %}
+        {% endfor%}
+    </datalist>
+    <div id="templates" style="display: none;">
+        <input id="station_num" type="hidden" value="0" />
+        <input id="sched_num" type="hidden" value="0" />
+        <table id="station_temp">
+            <tr id="new_sched-id-temp1" class="sched">
+                <td id="new_station-num-temp" class="station_fields" rowspan="2">
+                    <input id="new_stn-num-temp" name="new_stn-num-temp" value=""/>
+                </td>
+                <td id="new_station-lbl-temp" class="station_fields" rowspan="2">
+                    <input id="new_stn-lbl-temp" name="new_stn-lbl-temp" value=""/>
+                </td>
+                <td id="new_station-algn-temp" class="station_fields" rowspan="2">
+                    <input id="new_stn-algn-temp" name="new_stn-algn-temp" value=""/>
+                </td>
+                <td id="new_station-dep-temp" class="station_fields" rowspan="2">
+                    <input id="new_stn-dep-temp" name="new_stn-dep-temp" value=""/>
+                </td>
+            </tr>
+        </table>
+        <table id="sched_temp">
+            <tr id="new_sched-id-temp2" class="sched">
+                <td id="new_sched-act-temp" class="job">
+                    <input id="new_act-temp" name="new_act-temp" value=""/>
+                </td>
+                <td id="new_sched-class-temp" class="job">
+                    <input type="hidden" id="new_class-temp" name="new_class-temp" value=""/>
+                    <input id="new_class-name-temp" name="new_class-name-temp" class="cons_class" list="class_name-list" />
+                </td>
+                <td id="new_sched-code-temp" class="job">
+                    <input id="new_code-temp" type="button" class="code" name="new_code-temp" value=""/>
+                </td>
+                <td id="new_sched-man-temp" class="job">
+                    <input id="new_man-temp" type="button" name="new_man-temp" class="code_ref" ref_id="" value=""/>
+                </td>
+                <td id="new_sched-pos-temp" class="job">
+                    <input id="new_pos-temp" name="new_pos-temp" value=""/>
+                </td>
+                <td id="new_sched-rem-temp" class="job">
+                    <input id="new_rem-temp" name="new_rem-temp" value=""/>
+                </td>
+                <td  id="new_sched-del-temp" class="del_sched new">
+                    <button id="new_del-temp" name="new_del-temp" type="button">Del</button>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td colspan="7">
+                    <button id="new_add_sched-temp" class="add_sched" type="button">Add Schedule</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="content_screen"></div>
+{% endblock %}
+{% block extrascript %}
+<script src="{% static '/js/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static '/js/jquery-confirm.min.js' %}"></script>
+<script src="{% static '/js/common.js' %}"></script>
+<script src="{% static '/js/index.js' %}"></script>
+{% endblock %}

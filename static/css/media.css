@@ -1,0 +1,102 @@
+@media only screen and (max-width: 660px) {
+    #menu-holder {
+        position: relative;
+    }
+
+    #menu-icon {
+        font-size: 32px;
+        line-height: 1;
+    }
+
+    #menu-icon > p span {
+        top: 0px;
+    }
+
+    #page_title > h4 {
+        margin-right: 21px;
+    }
+
+    #existing {
+        display: block;
+        border-bottom: 1px solid #ddd;
+    }
+
+    #existing h4 {
+        width: auto;
+    }
+
+    #saved_classes a {
+        width: 209px;
+        line-height: 1.8;
+    }
+
+    .code_group_container {
+        min-width: 300px;
+    }
+
+    #code-form-fields {
+        flex-wrap: wrap;
+    }
+
+    .group_fields input {
+        font-size: 16px;
+    }
+
+    .group_fields input:nth-child(2) {
+        width: 60%;
+    }
+    
+    .group_fields button {
+        min-width: 20px;
+    }
+
+    .code_fields input {
+        font-size: 16px;
+    }
+
+    .code_fields input:nth-child(2) {
+        width: 72%;
+    }
+
+    #cons_class-fields > div, #sched_store-fields > div {
+        width: auto;
+    }
+
+    #cons_class-fields input {
+        line-height: 2;
+        font-size: 18px;
+    }
+
+    #save_sched_btn > div {
+        right: 0px;
+    }
+
+    #share_sched_btn > div {
+        right: 0;
+    }
+
+    #cons_class_names{
+        width: 100%;
+        margin: 2px 5px;
+    }
+
+    .loader {
+        width: 25px;
+        height: 25px;
+    }
+
+    /* .main_btn {
+        width: 90%;
+        margin: 10px auto;
+        float: none;
+    } */
+
+    .confirm_modal {
+        width: 98%;
+    }
+
+    .codes_modal {
+        width: 98%;
+    }
+
+}

@@ -1,0 +1,809 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
+}
+
+button, input, optgroup, select, textarea {
+    color: inherit;
+    font: inherit;
+    border-radius: 3px;
+    border: solid 1px #ddd;
+    text-align: center;
+}
+
+button {
+    background-color: #f5f5f5;
+}
+
+input[disabled] {
+    background-color: #efefef;
+    border: 1px solid #ddd;
+}
+
+select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    border: 1px solid #ddd;
+    margin: 0 2px;
+}
+
+button[disabled] {
+    opacity: 0.4;
+}
+
+#loader {
+	border: 3px solid #f3f3f3;
+	-webkit-animation: spin 1s linear infinite;
+	animation: spin 1s linear infinite;
+	border-top: 3px solid #555;
+	border-radius: 50%;
+	width: 30px;
+    height: 30px;
+    margin: 5px auto;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#header {
+    padding: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	background-color: #999999;
+    color: #303030;
+    height: auto;
+    line-height: 1.2;
+    justify-content: space-between;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+#header a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#header a:visited {
+    color: #303030;
+}
+
+#header h1 {
+    margin: 0;
+}
+
+#header p {
+    margin: 0;
+}
+
+#user-btn {
+    position: relative;
+    float: right;
+    background-color: transparent;
+    padding: 0 8px;
+    margin-bottom: 4px;
+    border:0;
+}
+
+#user-btn #user-icon {
+    padding: 0;
+}
+
+#user-icon p {
+    font-size: 36px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#user-actions {
+    display: none;
+    position: absolute;
+    right: 0;
+    /* top: 115%; */
+    z-index: 3000;
+    background-color: #999999;
+}
+
+#user-btn strong {
+    color: #fff;
+}
+
+/* #user-btn:hover {
+    padding-left: 20px;
+} */
+
+/* #user-btn:hover strong {
+    padding-bottom: 10px;
+} */
+
+#user-btn:hover #user-actions {
+    display: block;
+}
+
+#user-actions a {
+    display: block;
+    white-space: nowrap;
+    text-decoration: none;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.2;
+    padding: 10px 36px;
+}
+
+#user-actions a:visited {
+    color: #fff;
+}
+
+#user-actions a:hover {
+    background-color: #666666;
+    color: #fff;
+}
+
+#page_title {
+    background-color: #444444;
+    color: #aaaaaa;
+    width: 100%;
+    line-height: 1.8;
+    text-align: center;
+    display: flex;
+}
+
+#page_title h4 {
+    display: inline-block;
+    margin: 0;
+    font-size: 18px;
+    width: 100%;
+}
+
+/* #switch_role {
+    position: absolute;
+    right: 10px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #aaaaaa;
+    cursor: pointer;
+    line-height: 2.2;
+}
+
+#switch_role:visited {
+    color: #aaaaaa;
+} */
+
+#content-holder {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#menu-holder {
+    display: flex;
+    flex-wrap: wrap;
+    position: absolute;
+}
+
+#menu-icon {
+    font-size: 32px;
+    cursor: pointer;
+    margin: 0 5px;
+    line-height: 1;
+}
+
+#menu-icon > p {
+    margin: 0;
+}
+
+#menu-icon > p span {
+    position: relative;
+    top: 0px;
+    color: #aaa;
+}
+
+#menu-holder:hover #menu-icon > p {
+    background-color: #ddd
+}
+
+#menu-holder:hover #menu-icon > p span {
+    color: rgb(16, 82, 136);
+}
+
+#menu {
+    background-color: #dddddd;
+    display: none;
+    z-index: 4000;
+    position: absolute;
+    left: 5px;
+    margin-top: 32px;
+}
+
+#menu h4 {
+    background-color: rgb(16, 82, 136);
+    color: #fff;
+    margin: 4px;
+    padding: 4px;
+    line-height: 1.4;
+    white-space: nowrap;
+    display: block;
+    width: auto;
+}
+
+#menu-holder:hover #menu {
+    display: block;
+}
+
+#menu #new h4 {
+    background-color: rgb(0, 156, 228);
+}
+
+#menu #new h4:hover {
+    background-color: rgb(1, 142, 207);
+}
+
+#menu #new h4 a {
+    text-decoration: none;
+    color: #fff;
+}
+
+#menu #new h4 a:visited {
+    color: #fff;
+}
+
+#existing {
+    display: flex;
+}
+
+#existing h4 {
+    width: 100%;
+    cursor: default;
+}
+
+#saved_classes {
+    display: none;
+    z-index: 5000;
+    position: relative;
+}
+
+#saved_classes > div {
+    display: flex;
+    flex-wrap: wrap;
+    position: absolute;
+}
+
+#saved_classes a {
+	background-color: #ddd;
+	text-decoration: none;
+	white-space: nowrap;
+	line-height: 2.1;
+	display: block;
+	width: 220px;
+	border: 4px solid #ddd;
+	background-color: rgb(20, 96, 158);
+	color: #fff;
+	font-weight: bold;
+}
+
+#saved_classes > a:visited {
+    color: #fff;
+}
+
+#existing:hover #saved_classes{
+    display: block;
+}
+
+#existing:hover h4 {
+    background-color: rgb(20, 96, 158);
+    padding-bottom: 4px;
+}
+
+#content_screen {
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	opacity: 0.5;
+	top: 65px;
+	left: 0;
+	z-index: 2000;
+	background-color: #fff;
+}
+
+#work_area {
+    max-width: 800px;
+    text-align: center;
+    margin: 2px auto;
+}
+
+#message {
+    width: 100%;
+    line-height: 1.4;
+    background-color: antiquewhite;
+    text-align: center;
+    font-size: 14px;
+}
+
+#work_area > h3 {
+    margin: 6px 0;
+    color: #444444;
+}
+
+#work_area input[type=text] {
+    border-radius: 3px;
+    border: solid 1px #ddd;
+    text-align: center;
+
+}
+
+#cons_class-fields {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#cons_class-fields > div, #sched_store-fields > div {
+    width: 33.33%;
+}
+
+#cons_class-fields > div:nth-child(2) {
+    flex-basis: 250px;
+}
+
+#cons_class-fields input {
+	line-height: 1.6;
+	font-size: 20px;
+	font-weight: bold;
+	color: #444;
+}
+
+#cons_class-name {
+    width: 100%;
+}
+
+#form_controls {
+    display: flex;
+    justify-content: left;
+}
+
+#code-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#code-form-fields {
+    display: flex;
+    width: 100%;
+}
+
+.main_btn {
+    color: #fff;
+    border: 0px;
+    line-height: 1.4;
+    border-radius: 4px;
+    margin: 0 4px;
+    font-size: 28px;
+}
+
+.main_btn.save {
+    background-color: rgb(95, 173, 236);
+}
+
+.main_btn.save:hover {
+    background-color: rgb(46, 135, 207);
+}
+
+.main_btn.save[disabled]:hover{
+    background-color: rgb(95, 173, 236);
+}
+
+.main_btn.delete {
+    background-color: rgb(255, 198, 188);
+}
+
+.main_btn.delete:hover {
+    background-color:  rgb(255, 156, 139);
+}
+
+.main_btn.delete[disabled]:hover {
+    background-color: rgb(255, 198, 188);
+}
+
+#save_sched_btn {
+    padding: 0 4px;
+}
+
+#share_sched_btn {
+	display: flex;
+	justify-content: center;
+    padding: 0 4px;
+    background-color: rgb(196, 245, 228);
+    position: relative;
+    display: inline-block;
+}
+
+#share_sched_btn:hover {
+    background-color: rgb(171, 235, 212);
+}
+
+#share_sched_btn[disabled]:hover {
+    background-color: rgb(196, 245, 228);
+}
+
+.main_btn span:first-child {
+    font-size: 28px;
+    margin: 0;
+    position: relative;
+    top: -3px;
+}
+
+#save_sched_btn span:first-child {
+    top: 0;
+}
+
+.main_btn  span {
+    color: #777;
+    font-size: 12px;
+    margin-left: 4px;
+    position: relative;
+    top: 12px;
+}
+.main_btn:hover span {
+    color: #999;
+}
+
+.main_btn[disabled]:hover span {
+    color: #777;
+}
+
+.main_btn > div {
+    display: none;
+    position: absolute;;
+    text-align: left;
+}
+
+#save_sched_btn > div {
+    background-color: rgb(255, 241, 215);
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+}
+
+#share_sched_btn > div {
+    background-color: beige;
+    font-size: 16px;
+    text-align: center;
+    color: #555;
+} 
+
+.save_opts {
+    border: 2px solid rgb(255, 248, 227);
+    padding: 4px 48px;
+    color: #303030;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 2;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.save_opts:hover {
+    background-color: rgb(255, 233, 200);
+}
+
+#share_sched_btn > div > div {
+    line-height: 1.5;
+    display: flex;
+}
+
+#share_sched_btn > div > div:hover {
+    background-color: rgb(255, 255, 212)
+} 
+
+#share_sched_btn > div > div > p {
+    font-size: 14px;
+    font-weight: bold;
+    color: #303030;
+    margin: 0;
+    padding: 8px;
+}
+
+#share_sched_btn > div > div > label {
+    font-size: 14px;
+    color: #303030;
+    position: relative;
+    left: -5px;
+    padding: 8px;
+}
+
+.main_btn:hover > div {
+    display: block;
+}
+
+.main_btn[disabled]:hover > div {
+    display: none;
+}
+
+#cons_class_names {
+    
+}
+
+#class_names-header {
+    background-color: #777;
+    color: #eee;
+    display: flex;
+    font-size: 16px;
+    cursor: pointer;
+    justify-content: center;
+    border-radius: 3px 3px 0 0;
+    padding: 0 10px;
+}
+
+#class_names-header > p {
+    margin: 0;
+    padding: 4px 10px;
+}
+
+#class_names-content {
+    background-color: #dddddd;
+    border-radius: 0 0 3px 3px;
+}
+
+.class_names > * {
+    margin: 1px auto 0;
+}
+
+.code_group_container {
+    background-color: #ddd;
+    margin: 5px;
+    width: 100%;
+    border-radius: 4px;
+    min-width: 390px;
+}
+
+.code_group_container h4 {
+    margin: 4px;
+    background-color: rgb(0, 90, 163);
+    line-height: 1.6;
+    color: #ddd;
+    border-radius: 3px 3px 0 0;
+}
+
+.code_group_container button {
+    cursor: pointer;
+    font-size: 14px;
+    border-style: outset;
+}
+
+.code_group_container button:hover {
+    background-color: #fff;
+}
+
+.code_groups {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 5px;
+}
+
+.group_container {
+    display: block;
+    background-color: bisque;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    margin: 4px 2px;
+    padding: 2px;
+}
+
+.group_fields {
+	display: flex;
+	margin: 4px 4px 0;
+	background-color: lemonchiffon;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	padding: 2px;
+}
+
+.group_fields input {
+    width: 12%;
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold;
+    color: #444444;
+}
+
+.group_fields input:first-child {
+    width: 20%;
+}
+
+.group_fields input:nth-child(2) {
+    width: 75%;
+}
+
+.group_fields button {
+    width: 5%;
+    min-width: 20px;
+    padding: 0;
+    color: orangered;
+    border: 1px outset #ddd;
+    background-color: white;
+    border-radius: 4px;
+    margin: 0 2px 0 4px;
+}
+
+.code_container {
+	display: none;
+	background-color: lemonchiffon;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+	margin: 0 15px;
+	padding: 2px;
+	font-size: 14px;
+	border-top: none;
+	position: relative;
+	top: -3px;
+}
+
+.code_fields {
+    display: flex;
+}
+
+.code_fields input {
+    width: 20%;
+    font-size: 14px;
+}
+
+.code_fields input:first-child {
+    width: 18%;
+}
+
+.code_fields input:nth-child(2) {
+    width: 75%;
+}
+
+.code_fields button {
+    width: 5%;
+    min-width: 20px;
+    padding: 0;
+    color: orangered;
+    border: 1px outset #ddd;
+    background-color: white;
+    border-radius: 4px;
+    margin: 0 2px 0 4px;
+}
+
+.add_code {
+    margin: 2px auto 0;
+}
+
+.code_reference {
+    display: flex;
+    justify-content: center;
+}
+
+.del_ref {
+    width: 5%;
+    min-width: 20px;
+    padding: 0;
+    color: orangered;
+    border: 1px outset #ddd;
+    background-color: white;
+    border-radius: 4px;
+    margin: 0 2px 0 4px;
+}
+
+.ref_page {
+    width: 80px;
+}
+
+.confirm_modal {
+    width: 600px;
+    margin: auto;
+}
+
+.codes_modal {
+    width: 400px;
+    margin: auto;
+}
+
+.codes_modal_title {
+    text-align: center;
+}
+
+.code_part {
+    border: 1px outset #eee;
+    background-color: #ddd;
+    padding: 2px;
+}
+
+#work_area.schedules {
+    max-width: 100%;
+}
+
+#sched_store-fields {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#sched_store-name {
+    width: 100%;
+    line-height: 1.6;
+    font-size: 18px;
+    color: #444;
+}
+
+#sched-form-fields {
+    background-color: #ddd;
+    border-radius: 4px;
+    padding: 6px;
+    margin: 4px;
+    overflow-x: auto;
+}
+
+#sched-form-fields table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#sched-form th {
+    font-size: 12px;
+    border: thin solid #303030;
+    padding: 2px 6px;
+    background-color:#666666;
+    color: #efefef;
+}
+
+#sched-form td {
+    padding: 0;
+}
+
+#sched-form table input, #sched-form table select {
+    width: 100%;
+    margin: 0;
+    font-size: 14px;
+}
+
+.station_fields {
+    vertical-align: top;
+    background-color: #aaa;
+}
+
+#add_station, .add_sched {
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    line-height: 1.5;
+    background-color: rgb(192, 230, 248);
+    border: 1px outset azure;
+    margin-top: 4px;
+    border-radius: 3px;
+}
+
+.add_sched {
+    width: 50%;
+}
+
+#add_station {
+    background-color: blanchedalmond;
+    border-color: rgb(255, 243, 226);
+}
+
+#add_station:hover {
+    color: #444;
+    background-color: rgb(255, 212, 163)
+}
+
+.add_sched:hover {
+    color: #444;
+    background-color: rgb(166, 227, 255);
+}
+
